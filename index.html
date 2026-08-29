@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>《工程制图及实践》试点班智慧平台</title>
+    <style>
+        :root { --sidebar-width: 280px; --ai-width: 420px; --header-height: 60px; }
+        body { margin: 0; display: flex; height: 100vh; font-family: "Microsoft YaHei", sans-serif; background: #f0f2f5; overflow: hidden; }
+
+        /* 1. 左侧目录 */
+        #sidebar { width: var(--sidebar-width); background: #2c3e50; color: white; transition: 0.3s; flex-shrink: 0; display: flex; flex-direction: column; z-index: 100; }
+        #sidebar.collapsed { margin-left: calc(-1 * var(--sidebar-width)); }
+        .sidebar-header { padding: 20px; background: #1a252f; border-bottom: 1px solid #34495e; text-align: center; font-weight: bold; }
+        .menu-item { padding: 15px 20px; cursor: pointer; color: #bdc3c7; border-bottom: 1px solid #34495e; transition: 0.2s; }
+        .menu-item:hover, .menu-item.active { background: #34495e; color: white; border-left: 4px solid #3498db; }
+
+        /* 2. 中间内容区 */
+        #main-container { flex: 1; display: flex; flex-direction: column; background: #fff; min-width: 0; overflow: hidden; }
+        .toolbar { height: var(--header-height); background: #fff; border-bottom: 1px solid #dee2e6; display: flex; align-items: center; padding: 0 20px; justify-content: space-between; flex-shrink: 0; }
+        #content-area { flex: 1; overflow-y: auto; padding: 30px; box-sizing: border-box; }
+        
+        /* 内容样式 */
+        .content-section { display: none; max-width: 850px; margin: 0 auto; }
+        .content-section.active { display: block; }
+        .gb-box { background: #fff9db; border-left: 5px solid #fcc419; padding: 15px; margin: 20px 0; }
+        .highlight-box { background: #e7f5ff; border-left: 5px solid #339af0; padding: 15px; margin: 20px 0; }
+
+        /* 3. 右侧AI面板 - 彻底修复展示问题 */
+        #ai-panel { 
+            width: var(--ai-width); 
+            background: #fff; 
+            border-left: 1px solid #ccc; 
+            display: flex; 
+            flex-direction: column; 
+            transition: all 0.4s cubic-bezier(0.075, 0.82, 0.165, 1);
+            flex-shrink: 0; /* 强制不被挤压 */
+            position: relative;
+        }
+        #ai-panel.hidden { width: 0; border: none; overflow: hidden; }
+        
+        /* 全屏模式：采用覆盖式定位，确保充满屏幕 */
+        #ai-panel.expanded { 
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 80vw; 
+            height: 100vh;
+            z-index: 1000;
+            box-shadow: -5px 0 20px rgba(0,0,0,0.2);
+        }
+
+        .ai-header { background: #34495e; color: white; height: var(--header-height); display: flex; align-items: center; padding: 0 15px; justify-content: space-between; flex-shrink: 0; }
+        
+        /* 按钮样式 */
+        .btn { background: #3498db; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .btn:hover { background: #2980b9; }
+        .btn-green { background: #2ecc71; }
+        .btn-red { background: #e74c3c; }
+
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <div class="sidebar-header">知识地图与导航</div>
+        <!-- 这里的 showUnit 括号里要多加一个 this, 指代当前点击的菜单项 -->
+        <div class="menu-item active" onclick="showUnit(this, 'u1')">第一单元：绪论与制图基础</div>
+        <div class="menu-item" onclick="showUnit(this, 'u2')">第二单元：投影理论与基本体表达</div>
+        <div class="menu-item" onclick="showUnit(this, 'u3')">第三单元：截交线、相贯线与组合体</div>
+        <div class="menu-item" onclick="showUnit(this, 'u4')">第四单元：表达方案、剖视与断面</div>
+        <div class="menu-item" onclick="showUnit(this, 'u5')">第五单元：标准件、常用件与技术要求</div>
+        <div class="menu-item" onclick="showUnit(this, 'u6')">第六单元：零件图与装配图识读</div>
+        <div class="menu-item" onclick="showUnit(this, 'u7')">第七单元：SolidWorks 基础与草图约束</div>
+        <div class="menu-item" onclick="showUnit(this, 'u8')">第八单元：三维建模、特征操作与局限性</div>
+        <div class="menu-item" onclick="showUnit(this, 'u9')">第九单元：数字化出图与综合评审</div>
+    </div>
+
+    <div id="main-container">
+        <div class="toolbar">
+            <button class="btn" onclick="toggleSidebar()">☰ 切换目录</button>
+            <div style="font-weight:bold; font-size:16px;">《工程制图及实践》试点班智慧平台</div>
+            <button class="btn btn-green" onclick="showAI()">召唤智能助教 🤖</button>
+        </div>
+        
+        <div id="content-area">
+<section id="u1" class="content-section active">
+    <h1>第一单元：绪论与制图基础</h1>
+    
+    <!-- 0. 数字化转型背景 -->
+    <div class="highlight-box">
+        <strong>🚩 时代背景：</strong> 现代航空航天工业已全面进入 <strong>MBD (Model Based Definition)</strong> 时代。本单元的学习目标是从“纸笔绘图”转向理解“数字化工程定义”，理解国家标准（GB）是全球工程协作的唯一法律准则。
+    </div>
+
+    <!-- 1. 国家标准核心导读 -->
+<h2>1.1 核心国家标准 (GB) </h2>
+<p>本课程所有绘图要求均严格遵循现行国家标准。点击以下链接可直接在线查阅或下载对应 PDF 文档，请结合 AI 助教深入学习。</p>
+
+<!-- 1. 图纸幅面 -->
+<div class="gb-card" style="border: 1px solid #3498db; border-radius: 8px; margin-bottom: 25px; overflow: hidden;">
+    <div style="background: #3498db; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <strong>📄 GB/T 14689：图纸幅面与格式</strong>
+        <a href="YOUR_PDF_LINK_HERE" target="_blank" style="color: white; text-decoration: underline; font-size: 12px;">[在线查阅 PDF]</a>
+    </div>
+    <div style="padding: 20px; background: #fff;">
+        <p><strong>重要的东西：</strong></p>
+        <ul style="padding-left: 20px;">
+            <li><strong>常用幅面尺寸：</strong> 记住 A0 到 A4 的递减规律（面积减半）。在航天零件图中，A3 和 A4 是最常用的作业幅面。</li>
+            <li><strong>留白边距 (a, c, e)：</strong> 必须分清“留装订边”和“不留装订边”的尺寸差异。<strong>A3 图纸不留装订边时，边距 c 通常为 10mm。</strong></li>
+            <li><strong>标题栏位置：</strong> 标题栏必须位于图纸的右下角。</li>
+        </ul>
+        <div class="highlight-box" style="margin-top: 10px; font-size: 13px;">
+            <strong>💡 景老师强调：</strong> 标题栏中的文字方向即为看图方向。在数字化出图时，若幅面设置错误，会导致后续打印比例失调。
+        </div>
+    </div>
+</div>
+
+<!-- 2. 比例 -->
+<div class="gb-card" style="border: 1px solid #2ecc71; border-radius: 8px; margin-bottom: 25px; overflow: hidden;">
+    <div style="background: #2ecc71; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <strong>📄 GB/T 14690：比例</strong>
+        <a href="YOUR_PDF_LINK_HERE" target="_blank" style="color: white; text-decoration: underline; font-size: 12px;">[在线查阅 PDF]</a>
+    </div>
+    <div style="padding: 20px; background: #fff;">
+        <p><strong>重要的东西：</strong></p>
+        <ul style="padding-left: 20px;">
+            <li><strong>概念理解：</strong> 比例 = 图形尺寸 : 实物尺寸。例如 2:1 是放大比例，1:2 是缩小比例。</li>
+            <li><strong>标准比例序列：</strong> 只能使用国标规定的比例（如 1:2, 1:5, 1:10），不能随意写 1:3 或 1:7。</li>
+            <li><strong>尺寸数值的唯一性：</strong> <span style="color: #e74c3c; font-weight: bold;">（极重要）</span>无论图纸采用什么比例，标注的尺寸数字必须是零件的真实物理尺寸。</li>
+        </ul>
+    </div>
+</div>
+
+<!-- 3. 图线 -->
+<div class="gb-card" style="border: 1px solid #f39c12; border-radius: 8px; margin-bottom: 25px; overflow: hidden;">
+    <div style="background: #f39c12; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <strong>📄 GB/T 17450 & 4457.4：图线规范</strong>
+        <a href="YOUR_PDF_LINK_HERE" target="_blank" style="color: white; text-decoration: underline; font-size: 12px;">[在线查阅 PDF]</a>
+    </div>
+    <div style="padding: 20px; background: #fff;">
+        <p><strong>重要的东西：</strong></p>
+        <ul style="padding-left: 20px;">
+            <li><strong>八种基本线型：</strong> 重点掌握**粗实线**（可见轮廓）、**细实线**（尺寸线、剖面线）、**虚线**（不可见轮廓）和**细点画线**（轴线、中心线）。</li>
+            <li><strong>线宽比例：</strong> 粗线与细线的宽度比通常为 **2:1**。例如粗线 0.5mm，细线则为 0.25mm。</li>
+            <li><strong>重叠处理：</strong> 当粗实线与虚线、点画线重叠时，应优先画**粗实线**。</li>
+        </ul>
+        <div class="highlight-box" style="margin-top: 10px; font-size: 13px;">
+            <strong>🤖 AI 互动提示：</strong> 如果你拿不准某个特定结构（如螺纹末端）该用什么线，请向助教提问：“根据 GB/T 17450，螺纹终止线应该用哪种线型？”
+        </div>
+    </div>
+</div>
+
+<!-- 4. 字体 -->
+<div class="gb-card" style="border: 1px solid #9b59b6; border-radius: 8px; margin-bottom: 25px; overflow: hidden;">
+    <div style="background: #9b59b6; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <strong>📄 GB/T 14691：字体</strong>
+        <a href="YOUR_PDF_LINK_HERE" target="_blank" style="color: white; text-decoration: underline; font-size: 12px;">[在线查阅 PDF]</a>
+    </div>
+    <div style="padding: 20px; background: #fff;">
+        <p><strong>重要的东西：</strong></p>
+        <ul style="padding-left: 20px;">
+            <li><strong>汉字要求：</strong> 必须使用**长仿宋体**，倾斜度为 75 度或直立。汉字高度不得小于 3.5mm。</li>
+            <li><strong>数字与字母：</strong> 分为 A 型和 B 型，常用斜体。</li>
+            <li><strong>字体高度系列：</strong> 1.8, 2.5, 3.5, 5, 7, 10...（mm）。</li>
+        </ul>
+    </div>
+</div>
+
+    <!-- 2. 授课内容详解与强调 -->
+    <h2>1.2 需要注意的东西</h2>
+    
+    <h3>1.2.1 图线的画法与交接原则</h3>
+    <p>在绘制航空零件（如发动机叶片截面）时，图线的交接决定了逻辑的严密性：</p>
+    <table style="width:100%; border-collapse: collapse; margin: 15px 0; border: 1px solid #ddd;">
+        <tr style="background:#f2f2f2;">
+            <th style="padding:10px; border:1px solid #ddd;">类型</th>
+            <th style="padding:10px; border:1px solid #ddd;">绘图要点</th>
+            <th style="padding:10px; border:1px solid #ddd;">常见错误（避坑）</th>
+        </tr>
+        <tr>
+            <td style="padding:10px; border:1px solid #ddd;"><strong>细点画线</strong></td>
+            <td>应超出轮廓线 2-5mm</td>
+            <td>以“点”开头或结尾（必须以线段开头/结尾）</td>
+        </tr>
+        <tr>
+            <td style="padding:10px; border:1px solid #ddd;"><strong>虚线</strong></td>
+            <td>与实线连接时应留间隙</td>
+            <td>直接触碰实线导致结构界限不明</td>
+        </tr>
+    </table>
+
+    <h3>1.2.2 比例（Scale）的工程意义</h3>
+    <p>比例是零件实际尺寸与图纸尺寸的比值。<strong>注意：</strong>无论比例如何变化，标注的尺寸数字必须是零件的<strong>真实物理尺寸</strong>。</p>
+
+    <!-- 3. 案例分析 -->
+    <h2 style="color: #c0392b; border-bottom: 2px solid #c0392b;">1.3 案例分析”</h2>
+
+<div class="case-study-container" style="background: #fff; border: 1px solid #e74c3c; border-radius: 12px; padding: 25px; margin-top: 20px; box-shadow: 0 4px 15px rgba(231,76,60,0.1);">
+    
+    <!-- 1. 案例背景 -->
+    <div style="display: flex; gap: 20px; align-items: center; margin-bottom: 20px;">
+        <div style="background: #e74c3c; color: white; padding: 10px 15px; border-radius: 50%; font-weight: bold; font-size: 20px;">!</div>
+        <h3 style="margin: 0; color: #c0392b;">航天事故警示：消失的虚线与致命的误差</h3>
+    </div>
+
+    <div style="background: #fdf2f2; padding: 15px; border-radius: 6px; border-left: 4px solid #e74c3c; margin-bottom: 20px;">
+        <strong>案例背景：</strong> 
+        在某型航空发动机燃油喷嘴的改型设计中，由于制图人员对 <strong>GB/T 17450 图线规范</strong> 理解不深，在剖视图中将本应表达内部复杂流道的“细虚线”误漏或与“粗实线”重叠处理，且未按照标准进行局部分解说明。
+    </div>
+
+    <!-- 2. 视觉对比（核心展示） -->
+    <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+        <div style="flex: 1; border: 1px dashed #ccc; padding: 10px; text-align: center;">
+            <div style="color: #e74c3c; font-weight: bold;">[ ❌ 错误表达 ]</div>
+            <!-- 错误表达：线条混淆，没有剖面线 -->
+            <svg width="240" height="160" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+                <!-- 外轮廓 -->
+                <rect x="40" y="30" width="160" height="100" fill="#f9f9f9" stroke="black" stroke-width="2"/>
+                <!-- 混淆的内部流道：全部用粗实线，且没有剖面填充，看起来像个实心块 -->
+                <path d="M70 30 L70 130 M170 30 L170 130" stroke="black" stroke-width="2" />
+                <path d="M70 60 L170 60 M70 100 L170 100" stroke="black" stroke-width="2" />
+                <!-- 错误标注文字 -->
+                <text x="120" y="150" font-size="12" text-anchor="middle" fill="#e74c3c" font-weight="bold">内外部线型混淆，缺失剖面线</text>
+            </svg>
+            <p style="font-size: 12px; color: #666;">后果：加工人员误认为该处为实体，导致喷嘴冷却结构失效。</p>
+        </div>
+        <div style="flex: 1; border: 1px solid #2ecc71; padding: 10px; text-align: center;">
+            <div style="color: #2ecc71; font-weight: bold;">[ ✅ 标准表达 ]</div>
+            <!-- 标准表达：符合GB规范的剖视图 -->
+            <svg width="240" height="160" viewBox="0 0 240 160" xmlns="http://www.w3.org/2000/svg">
+                <!-- 实体部分：手动绘制剖面线（45度斜线） -->
+                <g stroke="#999" stroke-width="1">
+                    <line x1="40" y1="40" x2="50" y2="30" /><line x1="40" y1="60" x2="70" y2="30" />
+                    <line x1="40" y1="80" x2="90" y2="30" /><line x1="40" y1="100" x2="110" y2="30" />
+                    <line x1="40" y1="120" x2="130" y2="30" /><line x1="50" y1="130" x2="150" y2="30" />
+                    <line x1="70" y1="130" x2="170" y2="30" /><line x1="90" y1="130" x2="190" y2="30" />
+                    <line x1="110" y1="130" x2="200" y2="40" /><line x1="130" y1="130" x2="200" y2="60" />
+                    <line x1="150" y1="130" x2="200" y2="80" /><line x1="170" y1="130" x2="200" y2="100" />
+                    <line x1="190" y1="130" x2="200" y2="120" />
+                </g>
+                <!-- 挖空流道区域：白色填充遮盖 -->
+                <rect x="70" y="30" width="100" height="100" fill="white" stroke="none" />
+                <rect x="40" y="60" width="160" height="40" fill="white" stroke="none" />
+                
+                <!-- 正确的外轮廓 -->
+                <rect x="40" y="30" width="160" height="100" fill="none" stroke="black" stroke-width="2"/>
+                <!-- 内部孔径：剖开后的可见轮廓 -->
+                <path d="M70 30 L70 60 M70 100 L70 130 M170 30 L170 60 M170 100 L170 130" stroke="black" stroke-width="2" />
+                <path d="M40 60 L70 60 M170 60 L200 60 M40 100 L70 100 M170 100 L200 100" stroke="black" stroke-width="2" />
+                
+                <!-- 中心线：蓝色细点画线 -->
+                <line x1="30" y1="80" x2="210" y2="80" stroke="blue" stroke-width="1" stroke-dasharray="15,5,2,5" />
+                <!-- 正确标注文字 -->
+                <text x="120" y="150" font-size="12" text-anchor="middle" fill="#27ae60" font-weight="bold">符合 GB/T 4458.6 剖视规范</text>
+            </svg>
+            <p style="font-size: 12px; color: #666;">结果：通过正确的虚实线交接与剖视，清晰指导高精度 3D 打印加工。</p>
+        </div>
+    </div>
+
+    <!-- 3. 根源剖析 -->
+    <div style="margin-bottom: 20px;">
+        <h4 style="color: #2c3e50; border-left: 4px solid #2c3e50; padding-left: 10px;">🔍 根源剖析 (The Root Cause)</h4>
+        <p style="font-size: 14px; color: #555;">
+            在航天级精密零件中，结构紧凑度极高。<strong>GB/T 4457.4</strong> 明确规定了当粗实线与虚线重叠时应优先画粗实线，但这并不意味着虚线表达的结构可以被“忽略”。本案中制图者缺乏对<strong>“视图表达方案”</strong>的整体统筹，未能在关键受力点补充细节，违反了工程语言的“唯一性”原则。
+        </p>
+    </div>
+
+    <!-- 4. AI 智能审计预判（教改亮点） -->
+    <div style="background: #eef9ff; border: 1px solid #3498db; border-radius: 8px; padding: 20px;">
+        <h4 style="margin-top: 0; color: #2980b9; display: flex; align-items: center; gap: 8px;">
+            🤖 AI 试点班智能审计点
+        </h4>
+        <p style="font-size: 14px;"><strong>如果使用本项目研发的 AI 助手进行初审，它将如何预警？</strong></p>
+        <ul style="font-size: 13px; color: #34495e;">
+            <li><strong>规范性扫描：</strong>AI 会根据 <i>Computer Vision</i> 算法识别出剖视图中的封闭区域线型不匹配，提示：“检测到疑似封闭腔体，但缺乏对应虚线表达。”</li>
+            <li><strong>逻辑核校：</strong>AI 对比 3D 模型与 2D 投影时会报错：“2D 图纸缺失特征 A 的投影投影路径，存在 25% 的表达缺失风险。”</li>
+            <li><strong>即时纠偏：</strong>AI 自动关联 <strong>GB/T 14689</strong> 相关条款，要求设计者确认该处是否存在装配干涉。</li>
+        </ul>
+    </div>
+
+    <!-- 5. 景老师点评 -->
+    <div style="margin-top: 20px; font-style: italic; color: #7f8c8d; text-align: right;">
+        —— “在航天工程中，你画错的一条线，可能就是发射场的一声巨响。标准不是用来考试的，是用来保命的。”
+    </div>
+</div>
+
+    <!-- 4. AI 互动任务 -->
+    <div style="margin-top: 40px; border: 2px dashed #2ecc71; padding: 20px; border-radius: 10px; background: #fafff5;">
+        <h3 style="color:#27ae60; margin-top:0;">🤖 AI 试点班专供任务</h3>
+        <p>请点击右上角<strong>“召唤智能助教”</strong>，尝试输入以下指令进行互动：</p>
+        <ol>
+            <li>“请总结 <strong>GB/T 14689</strong> 中 A3 图纸横放与竖放的留边尺寸差异。”</li>
+            <li>“我画出的细点画线太短，无法表现‘长画’怎么办？请给点建议。”</li>
+            <li>“为什么在数字化设计（MBD）中，文字高度的选择如此重要？”</li>
+        </ol>
+        <p style="font-size:12px; color:#7f8c8d;">* 互动记录将作为平时过程性评价的一部分，请保留对话截图。</p>
+    </div>
+    
+</section>
+            
+<section id="u2" class="content-section">
+    <h1>第二单元：投影理论与基本体表达</h1>
+
+    <!-- 0. 核心逻辑导读 -->
+    <div class="highlight-box">
+        <strong>🧭 核心逻辑：</strong> 投影理论是三维实体向二维平面转化的“加密算法”。掌握了 <strong>“长对正、高平齐、宽相等”</strong>，你就拥有了还原工程世界的钥匙。
+    </div>
+
+    <h2>2.1 核心国家标准 (GB) 导读</h2>
+    <p>正投影法是工程制图的灵魂。在绘制基本体及三视图时，必须严格遵守以下投影准则：</p>
+
+    <!-- 1. 投影法通用准则 -->
+    <div class="gb-card" style="border: 1px solid #3498db; border-radius: 8px; margin-bottom: 25px; overflow: hidden;">
+        <div style="background: #3498db; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <strong>📄 GB/T 14692：技术制图 投影法</strong>
+            <a href="YOUR_PDF_LINK_HERE" target="_blank" style="color: white; text-decoration: underline; font-size: 12px;">[在线查阅 PDF]</a>
+        </div>
+        <div style="padding: 20px; background: #fff;">
+            <p><strong>学生必须掌握的内容：</strong></p>
+            <ul style="padding-left: 20px;">
+                <li><strong>第一角画法（First Angle Projection）：</strong> <span style="color: #e74c3c; font-weight: bold;">（极重要）</span>我国国家标准规定使用第一角画法。必须分清其与第三角画法（欧美标准）在视图位置上的本质区别。</li>
+                <li><strong>正投影基本特性：</strong> 真实性（平行）、积聚性（垂直）、收缩性（倾斜）。这是分析点线面投影的物理基础。</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- 2. 视图基本要求 -->
+    <div class="gb-card" style="border: 1px solid #2ecc71; border-radius: 8px; margin-bottom: 25px; overflow: hidden;">
+        <div style="background: #2ecc71; color: white; padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+            <strong>📄 GB/T 17451 & 4458.1：图样画法 视图</strong>
+            <a href="YOUR_PDF_LINK_HERE" target="_blank" style="color: white; text-decoration: underline; font-size: 12px;">[在线查阅 PDF]</a>
+        </div>
+        <div style="padding: 20px; background: #fff;">
+            <p><strong>学生必须掌握的内容：</strong></p>
+            <ul style="padding-left: 20px;">
+                <li><strong>基本视图的配置：</strong> 明确主、俯、左、右、仰、后六个视图的名称及相互配置位置。</li>
+                <li><strong>“九字真言”的法律地位：</strong> 标准明确了视图间必须保持“长对正、高平齐、宽相等”的投影对应关系。</li>
+            </ul>
+            <div class="highlight-box" style="margin-top: 10px; font-size: 13px;">
+                <strong>💡 景老师强调：</strong> 在航天零件出图时，若视图布置不符合 GB/T 17451 顺序，即便图形正确，也会被视为不合格图纸。
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. AI 互动：标准智能解读 -->
+    <div style="background: #eef9ff; border: 1px solid #3498db; border-radius: 8px; padding: 15px; margin-bottom: 30px;">
+        <h4 style="margin-top: 0; color: #2980b9;">🤖 AI 助教：标准检索建议</h4>
+        <p style="font-size: 14px;">如果你在分析点、线、面的特殊位置时产生混淆，可以询问 AI：</p>
+        <ul style="font-size: 13px; color: #34495e;">
+            <li>“根据 <strong>GB/T 14692</strong>，什么是投影的积聚性？请举例说明。”</li>
+            <li>“在我国国标画法下，左视图应该放在主视图的哪一边？”</li>
+        </ul>
+    </div>    
+
+    <!-- 1. 正投影法与三视图 -->
+    <h2>2.1 正投影法与“九字真言”</h2>
+    <p>在航天工程中，为了保证零件加工的绝对精确，我们采用正投影法。学生必须形成肌肉记忆的核心规律：</p>
+    
+    <div style="display: flex; gap: 20px; align-items: stretch; margin: 20px 0;">
+        <div style="flex: 1; background: #2c3e50; color: #fff; padding: 20px; border-radius: 8px; text-align: center;">
+            <h3 style="color: #3498db; margin-top: 0;">主、俯视图</h3>
+            <div style="font-size: 24px; font-weight: bold;">长 对 正</div>
+            <p style="font-size: 12px; color: #bdc3c7;">确保长度方向逻辑一致</p>
+        </div>
+        <div style="flex: 1; background: #2c3e50; color: #fff; padding: 20px; border-radius: 8px; text-align: center;">
+            <h3 style="color: #2ecc71; margin-top: 0;">主、左视图</h3>
+            <div style="font-size: 24px; font-weight: bold;">高 平 齐</div>
+            <p style="font-size: 12px; color: #bdc3c7;">确保高度方向准确定位</p>
+        </div>
+        <div style="flex: 1; background: #2c3e50; color: #fff; padding: 20px; border-radius: 8px; text-align: center;">
+            <h3 style="color: #f39c12; margin-top: 0;">俯、左视图</h3>
+            <div style="font-size: 24px; font-weight: bold;">宽 相 等</div>
+            <p style="font-size: 12px; color: #bdc3c7;">最易出错：深度方向的转化</p>
+        </div>
+    </div>
+
+    <!-- 2. 视觉实验室：基本体投影 -->
+    <h2>2.2 视觉实验室：典型基本体分析</h2>
+    <p>对于工程力学专业，理解基本体的受力面投影至关重要。以下是六种基本体的特征点线面分析：</p>
+    
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="gb-box" style="margin:0;">
+            <strong>🔹 平面基本体（棱柱、棱锥）</strong>
+            <p style="font-size: 13px;">关键：识别特殊位置平面（垂直面、平行面）的投影积聚性。</p>
+        </div>
+        <div class="gb-box" style="margin:0;">
+            <strong>🔸 曲面基本体（圆柱、圆锥、球）</strong>
+            <p style="font-size: 13px;">关键：寻找转向轮廓线。注意：圆柱面在非平行投影面上表现为矩形。</p>
+        </div>
+    </div>
+
+    <!-- 3. AI 互动实训：三维盲盒挑战 -->
+    <div class="case-card" style="margin-top: 30px; border: 2px solid #3498db;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+            <h3 style="margin:0; color: #2980b9;">🎲 AI 空间思维挑战：三维盲盒还原</h3>
+            <span class="case-tag" style="background:#3498db;">难度：★★★☆☆</span>
+        </div>
+        <p><strong>任务描述：</strong> 假设有一个航天级结构件，其主视图是矩形中间带圆圈，俯视图是两个同心圆。请你在脑海中构思其形状，并使用 AI 验证。</p>
+        
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 6px; margin: 15px 0;">
+            <p><strong>操作步骤：</strong></p>
+            <ol style="font-size: 14px;">
+                <li>打开右侧 <strong>“智能助教”</strong>。</li>
+                <li>输入指令：<code style="background:#eee; padding:2px 5px; color:#c7254e;">“我描述一个物体，请告诉我它的三视图特征：底面是圆形的底座，上方中心垂直连接一个较细的圆柱体。”</code></li>
+                <li>对比 AI 的描述与你画出的草图，检查 <strong>“宽相等”</strong> 环节是否逻辑一致。</li>
+            </ol>
+        </div>
+        <div style="text-align: center; color: #7f8c8d; font-style: italic; font-size: 13px;">
+            提示：这种结构在力学上常用于承受轴向压力的支撑柱。
+        </div>
+    </div>
+
+    <!-- 4. 景老师特别强调 -->
+    <div class="highlight-box" style="margin-top: 30px; background: #fff4e6; border-left-color: #fd7e14;">
+        <strong>⚠️ 避坑指南（景老师经验）：</strong> 
+        很多同学在画左视图时，容易把“宽相等”画错，导致模型在逻辑上无法闭合。
+        <strong>数字化验证技巧：</strong> 利用 AI 助教询问：“如果俯视图的半径是 R，左视图的总宽度应该是多少？”通过数值关系强制校准空间感。
+    </div>
+</section>
+        </div>
+    </div>
+
+    <!-- AI面板 -->
+    <div id="ai-panel">
+        <div class="ai-header">
+            <span>🤖 国标智能助教</span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn" id="expand-btn" onclick="toggleExpand()">全屏模式</button>
+                <button class="btn btn-red" onclick="hideAI()">隐藏</button>
+            </div>
+        </div>
+        <!-- 重点：智谱清言的嵌入 -->
+        <iframe src="https://chatglm.cn/"></iframe>
+    </div>
+
+    <script>
+        let isExpanded = false;
+
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('collapsed'); }
+        function showAI() { document.getElementById('ai-panel').classList.remove('hidden'); }
+        function hideAI() { 
+            document.getElementById('ai-panel').classList.add('hidden'); 
+            if(isExpanded) toggleExpand(); 
+        }
+
+        function toggleExpand() {
+            const panel = document.getElementById('ai-panel');
+            const btn = document.getElementById('expand-btn');
+            isExpanded = !isExpanded;
+            if (isExpanded) {
+                panel.classList.add('expanded');
+                btn.innerText = "还原窗口";
+            } else {
+                panel.classList.remove('expanded');
+                btn.innerText = "全屏模式";
+            }
+        }
+
+        function showUnit(el, unitId) {
+            const items = document.querySelectorAll('.menu-item');
+            items.forEach(i => i.classList.remove('active'));
+            el.classList.add('active');
+
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(s => s.classList.remove('active'));
+            document.getElementById(unitId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
